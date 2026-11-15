@@ -15,7 +15,7 @@ It's inspired by Meow Doku, a cat puzzle game, but with Poké Balls instead of c
 ## Design mockup
 ![Design mockup of the four screens](design/design-mockup.png)
 
-This is a picture of the plan, not the working game. The source is [design/mockup.html](design/mockup.html).
+This is a picture of the plan, not the working game.
 
 ## Status
 Planning is done. The game is not built yet.
