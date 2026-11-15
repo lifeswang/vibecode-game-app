@@ -64,7 +64,15 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 - The MLP ships one hand-made puzzle, not a random generator.
 - Name is optional (default "Guest"). Score is fastest time. Scores are saved in the browser only.
 
-## 5. Progress notes
+## 5. How to build (read this when I say "start building")
+- **Tech:** Plain HTML, CSS and JavaScript in a single `index.html` file at the repo root. No frameworks, no installs. Open it by double-clicking.
+- **What to build:** The "Must have" checklist above, in order, matching `design/design-mockup.png` (four screens: start, playing, win, high scores).
+- **Puzzle:** One hand-made 6x6 puzzle with a single correct answer. Zone layout and solution are in the mockup's board.
+- **Scores:** Saved in the browser with `localStorage`. Show the 5 fastest times.
+- **Before pushing:** Show me the working game first and wait for my approval. Then take screenshots of the real game, add them to the README, and tick the checklist.
+- **Do not add** anything from "Can wait" until the must-haves are done.
+
+## 6. Progress notes
 Add short notes here as you work.
 
 - (date) ...
