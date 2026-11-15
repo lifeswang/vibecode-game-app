@@ -12,6 +12,11 @@ It's inspired by Meow Doku, a cat puzzle game, but with Poké Balls instead of c
 - You win when every row, column and zone has one ball.
 - Enter a name (or leave it empty) on the start screen. Your time is saved, and you can see the 5 fastest times.
 
+## Design mockup
+![Design mockup of the four screens](design/design-mockup.png)
+
+This is a picture of the plan, not the working game. The source is [design/mockup.html](design/mockup.html).
+
 ## Status
 Planning is done. The game is not built yet.
 
