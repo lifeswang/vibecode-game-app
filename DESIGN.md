@@ -28,7 +28,10 @@ Placing things on a grid under simple rules (the Meow Doku mechanic).
    - **Win:** Every row, column and color zone has exactly one ball, and none of them touch.
    - **Mistakes:** If you place a ball that breaks a rule, you lose a heart and that ball disappears.
    - **Lose:** You have 3 hearts. At 0 hearts, the puzzle restarts.
-5. **Visual concept:** A 6x6 grid with soft, bright colors, one color per zone. Every piece is the same simple red and white Poké Ball. Placing a ball makes it pop in. A wrong move makes the square shake and a heart disappears.
+   - **Start screen:** Before playing, you can type a name (optional, empty means "Guest") and tap "Start game".
+   - **Score:** Fastest time wins. A timer runs while you play.
+   - **High scores:** After you win, you see your time and a list of the 5 fastest times. Scores are saved in the browser, so they only show on that device.
+5. **Visual concept:** Three screens: a start screen (logo, name box, "Start game", "High scores" link), the game board, and a win screen with the time and a high score list. The board is a 6x6 grid with soft, bright colors, one color per zone. Every piece is the same simple red and white Poké Ball. Placing a ball makes it pop in. A wrong move makes the square shake and a heart disappears.
 6. **MLP:** See the checklist below.
 
 ## 3. Build checklist (MLP)
@@ -42,10 +45,12 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 - [ ] 3 hearts, and the puzzle restarts at 0
 - [ ] "You win" screen and "Try again" button
 - [ ] One simple Poké Ball picture
+- [ ] Start screen with optional name box and "Start game" button
+- [ ] Timer while playing
+- [ ] Save scores in the browser and show the 5 fastest times
 
 ### Can wait
 - [ ] More levels and bigger boards
-- [ ] Timer
 - [ ] Free starting ball on early levels
 - [ ] Daily puzzle
 - [ ] Sound effects
@@ -57,6 +62,7 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 - Zones are only colors. Every ball looks the same.
 - A wrong ball disappears and costs one heart.
 - The MLP ships one hand-made puzzle, not a random generator.
+- Name is optional (default "Guest"). Score is fastest time. Scores are saved in the browser only.
 
 ## 5. Progress notes
 Add short notes here as you work.

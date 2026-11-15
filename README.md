@@ -10,6 +10,7 @@ It's inspired by Meow Doku, a cat puzzle game, but with Poké Balls instead of c
 - Balls can't touch, even diagonally.
 - A wrong ball costs one heart and disappears. You have 3 hearts, and the puzzle restarts at 0.
 - You win when every row, column and zone has one ball.
+- Enter a name (or leave it empty) on the start screen. Your time is saved, and you can see the 5 fastest times.
 
 ## Status
 Planning is done. The game is not built yet.
