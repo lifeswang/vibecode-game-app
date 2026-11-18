@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poké Ball Grid</title>
+<style>
+  :root { --bg:#f5f4ef; --card:#ffffff; --text:#2c2c2a; --muted:#6b6a64; --line:#d3d1c7; --red:#e24b4a; --blue:#185fa5; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; }
+  .screen { width:100%; max-width:380px; min-height:480px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; display:none; flex-direction:column; align-items:center; text-align:center; }
+  .screen.active { display:flex; }
+  .title { font-size:20px; font-weight:500; margin:12px 0 4px; }
+  .small { font-size:14px; color:var(--muted); margin:0; }
+  input { width:100%; padding:12px; font-size:16px; text-align:center; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--text); }
+  button { width:100%; padding:12px; font-size:16px; font-weight:500; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--text); cursor:pointer; }
+  button:hover { background:#f1efe8; }
+  button.primary { background:var(--text); color:#fff; border-color:var(--text); }
+  button.primary:hover { background:#444441; }
+  button.link { width:auto; border:none; background:none; color:var(--blue); font-size:15px; font-weight:400; margin-top:14px; }
+  .top { display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:12px; font-weight:500; }
+  .hearts { font-size:22px; letter-spacing:2px; }
+  .hearts .full { color:var(--red); }
+  .hearts .lost { color:var(--line); }
+  .board { display:grid; grid-template-columns:repeat(6,1fr); gap:3px; background:#8a8880; padding:3px; border-radius:10px; width:100%; }
+  .cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:500; color:var(--muted); border:none; border-radius:0; padding:0; }
+  .cell:hover { filter:brightness(0.96); background-color:inherit; }
+  .cell svg { width:70%; height:70%; }
+  .cell.bad { outline:3px solid var(--red); outline-offset:-3px; animation:shake .35s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+  .zA{background:#cecbf6}.zB{background:#9fe1cb}.zC{background:#fac775}.zD{background:#f5c4b3}.zE{background:#b5d4f4}.zF{background:#c0dd97}
+  .spacer { flex:1; }
+  .msg { min-height:20px; margin:12px 0 0; font-size:14px; color:var(--muted); }
+  .big { font-size:36px; font-weight:500; margin:6px 0 0; }
+  .lb { width:100%; text-align:left; margin:12px 0; }
+  .lb .r { display:flex; justify-content:space-between; padding:9px 8px; border-top:1px solid var(--line); font-size:15px; }
+  .lb .r:first-child { border-top:none; }
+  .lb .me { background:#e6f1fb; color:#0c447c; border-radius:6px; border-top:none; }
+  .stack { width:100%; display:flex; flex-direction:column; gap:8px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pb" viewBox="0 0 32 32">
+    <path d="M2 16A14 14 0 0 1 30 16Z" fill="#e24b4a"/>
+    <path d="M2 16A14 14 0 0 0 30 16Z" fill="#fff"/>
+    <circle cx="16" cy="16" r="14" fill="none" stroke="#2c2c2a" stroke-width="2"/>
+    <line x1="2" y1="16" x2="30" y2="16" stroke="#2c2c2a" stroke-width="2"/>
+    <circle cx="16" cy="16" r="4.5" fill="#fff" stroke="#2c2c2a" stroke-width="2"/>
+  </symbol>
+</svg>
+
+<section class="screen active" id="start">
+  <svg width="72" height="72" style="margin-top:40px" aria-hidden="true"><use href="#pb"/></svg>
+  <div class="title">Poké Ball Grid</div>
+  <p class="small" style="margin-bottom:24px">One ball per row, column, and zone.</p>
+  <input type="text" id="name" maxlength="12" placeholder="Your name (optional)" aria-label="Your name">
+  <button class="primary" id="startBtn" style="margin-top:10px">Start game</button>
+  <button class="link" id="startScores">High scores</button>
+</section>
+
+<section class="screen" id="game">
+  <div class="top"><span>Poké Ball Grid</span><span class="hearts" id="hearts" aria-label="Hearts left"></span></div>
+  <div class="board" id="board"></div>
+  <p class="msg" id="msg">Tap a square: ✕, then ball, then empty</p>
+  <div class="spacer"></div>
+  <p class="small" id="timer">Time 0:00</p>
+</section>
+
+<section class="screen" id="win">
+  <div class="top"><span>Poké Ball Grid</span><span class="hearts" id="winHearts" aria-label="Hearts left"></span></div>
+  <div class="board" id="winBoard"></div>
+  <div class="title" id="winTitle" style="margin-top:14px">You win</div>
+  <div class="big" id="winTime">0:00</div>
+  <p class="small" style="margin-bottom:12px">Your time</p>
+  <div class="stack">
+    <button id="winScores">View high scores</button>
+    <button class="primary" id="winAgain">Play again</button>
+  </div>
+</section>
+
+<section class="screen" id="scores">
+  <div class="title" style="margin-top:6px">High scores</div>
+  <p class="small">Fastest times</p>
+  <div class="lb" id="lb"></div>
+  <div class="spacer"></div>
+  <button class="primary" id="scoresAgain">Play again</button>
+</section>
+
+<script>
+var N = 6;
+var ZONES = ["AAAABB","AAAABB","CCCDBB","CDDDBB","CDDFEE","CDDFFE"];
+var BALL = '<svg aria-hidden="true"><use href="#pb"/></svg>';
+var MAX_HEARTS = 3, KEY = "pokeBallGridScores";
+
+var cells, hearts, startTime, timerId, flash, locked, playerName, lastId;
+
+function $(id) { return document.getElementById(id); }
+function show(id) {
+  var s = document.querySelectorAll(".screen");
+  for (var i = 0; i < s.length; i++) s[i].classList.remove("active");
+  $(id).classList.add("active");
+}
+function fmt(ms) {
+  var t = Math.floor(ms / 1000);
+  return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+}
+function heartsHtml() {
+  var h = "";
+  for (var i = 0; i < MAX_HEARTS; i++) h += '<span class="' + (i < hearts ? "full" : "lost") + '">♥</span>';
+  return h;
+}
+function drawBoard(el, interactive) {
+  var h = "";
+  for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
+    var v = cells[r][c], inner = "", cls = "cell z" + ZONES[r][c];
+    if (v === 2) inner = BALL; else if (v === 1) inner = "✕";
+    if (flash && flash.r === r && flash.c === c) { inner = BALL; cls += " bad"; }
+    var label = "Row " + (r + 1) + ", column " + (c + 1) + ", " + (v === 2 ? "ball" : v === 1 ? "marked" : "empty");
+    h += '<button class="' + cls + '" data-r="' + r + '" data-c="' + c + '" aria-label="' + label + '"' + (interactive ? "" : " disabled") + ">" + inner + "</button>";
+  }
+  el.innerHTML = h;
+}
+function render() {
+  drawBoard($("board"), true);
+  $("hearts").innerHTML = heartsHtml();
+}
+function resetPuzzle() {
+  cells = [];
+  for (var r = 0; r < N; r++) cells.push(new Array(N).fill(0));
+  hearts = MAX_HEARTS; flash = null; locked = false;
+}
+function startTimer() {
+  startTime = Date.now();
+  clearInterval(timerId);
+  $("timer").textContent = "Time 0:00";
+  timerId = setInterval(function () { $("timer").textContent = "Time " + fmt(Date.now() - startTime); }, 250);
+}
+function startGame() {
+  playerName = $("name").value.trim() || "Guest";
+  resetPuzzle();
+  $("msg").textContent = "Tap a square: ✕, then ball, then empty";
+  render(); show("game"); startTimer();
+}
+function conflicts(r, c) {
+  for (var i = 0; i < N; i++) for (var j = 0; j < N; j++) {
+    if (cells[i][j] !== 2 || (i === r && j === c)) continue;
+    if (i === r || j === c || ZONES[i][j] === ZONES[r][c]) return true;
+    if (Math.abs(i - r) <= 1 && Math.abs(j - c) <= 1) return true;
+  }
+  return false;
+}
+function ballCount() {
+  var n = 0;
+  for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (cells[r][c] === 2) n++;
+  return n;
+}
+function tap(r, c) {
+  if (locked) return;
+  var v = cells[r][c];
+  if (v === 0) { cells[r][c] = 1; }
+  else if (v === 2) { cells[r][c] = 0; }
+  else if (conflicts(r, c)) { mistake(r, c); return; }
+  else { cells[r][c] = 2; }
+  render();
+  if (ballCount() === N) win();
+}
+function mistake(r, c) {
+  hearts--; cells[r][c] = 0; flash = { r: r, c: c }; locked = true;
+  $("msg").textContent = "That ball breaks a rule. You lose a heart.";
+  render();
+  setTimeout(function () {
+    flash = null; locked = false;
+    if (hearts <= 0) {
+      resetPuzzle(); startTimer();
+      $("msg").textContent = "Out of hearts. The puzzle restarted.";
+    }
+    render();
+  }, 500);
+}
+function loadScores() {
+  try { var s = JSON.parse(localStorage.getItem(KEY)); return Array.isArray(s) ? s : []; } catch (e) { return []; }
+}
+function saveScore(entry) {
+  var all = loadScores(); all.push(entry);
+  all.sort(function (a, b) { return a.ms - b.ms; });
+  all = all.slice(0, 5);
+  try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {}
+  return all;
+}
+function win() {
+  clearInterval(timerId);
+  var ms = Date.now() - startTime;
+  lastId = Date.now() + "-" + Math.random();
+  saveScore({ id: lastId, name: playerName, ms: ms });
+  $("winTitle").textContent = "You win, " + playerName;
+  $("winTime").textContent = fmt(ms);
+  $("winHearts").innerHTML = heartsHtml();
+  drawBoard($("winBoard"), false);
+  show("win");
+}
+function showScores() {
+  var list = loadScores(), box = $("lb");
+  box.innerHTML = "";
+  if (!list.length) {
+    var p = document.createElement("p"); p.className = "small"; p.textContent = "No scores yet. Win a game to get on the list.";
+    box.appendChild(p);
+  }
+  list.forEach(function (e, i) {
+    var row = document.createElement("div");
+    row.className = "r" + (e.id === lastId ? " me" : "");
+    var a = document.createElement("span"); a.textContent = (i + 1) + ". " + e.name;
+    var b = document.createElement("span"); b.textContent = fmt(e.ms);
+    row.appendChild(a); row.appendChild(b); box.appendChild(row);
+  });
+  show("scores");
+}
+function backToStart() { clearInterval(timerId); show("start"); }
+
+$("board").addEventListener("click", function (e) {
+  var b = e.target.closest(".cell");
+  if (b) tap(+b.dataset.r, +b.dataset.c);
+});
+$("startBtn").addEventListener("click", startGame);
+$("name").addEventListener("keydown", function (e) { if (e.key === "Enter") startGame(); });
+$("startScores").addEventListener("click", showScores);
+$("winScores").addEventListener("click", showScores);
+$("winAgain").addEventListener("click", startGame);
+$("scoresAgain").addEventListener("click", startGame);
+</script>
+</body>
+</html>

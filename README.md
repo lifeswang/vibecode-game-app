@@ -12,13 +12,25 @@ It's inspired by Meow Doku, a cat puzzle game, but with Poké Balls instead of c
 - You win when every row, column and zone has one ball.
 - Enter a name (or leave it empty) on the start screen. Your time is saved, and you can see the 5 fastest times.
 
-## Design mockup
-![Design mockup of the four screens](design/design-mockup.png)
+## How to run
+Open `index.html` in a browser (double-click it). There is nothing to install.
 
-This is a picture of the plan, not the working game.
+## Screenshots
+| Start | Playing (one mistake) |
+|---|---|
+| ![Start screen](screenshots/start.png) | ![Playing](screenshots/playing.png) |
+
+| Win | High scores |
+|---|---|
+| ![Win screen](screenshots/win.png) | ![High scores](screenshots/scores.png) |
+
+The high score names in these screenshots are demo data.
+
+## Design
+The original plan is in [DESIGN.md](DESIGN.md), with a design mockup in `design/design-mockup.png`.
 
 ## Status
-Planning is done. The game is not built yet.
+The first playable version is built (one 6x6 puzzle, hearts, timer, and saved high scores).
 
 ## More info
 See [DESIGN.md](DESIGN.md) for the full design, the build checklist and progress notes.

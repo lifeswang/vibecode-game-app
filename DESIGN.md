@@ -39,15 +39,15 @@ Placing things on a grid under simple rules (the Meow Doku mechanic).
 Work top to bottom. Only start "Can wait" items if the must-haves are done.
 
 ### Must have
-- [ ] One 6x6 puzzle with a single correct answer
-- [ ] Three-tap cycle (✕, ball, empty)
-- [ ] Rule checking for rows, columns, zones and touching
-- [ ] 3 hearts, and the puzzle restarts at 0
-- [ ] "You win" screen and "Try again" button
-- [ ] One simple Poké Ball picture
-- [ ] Start screen with optional name box and "Start game" button
-- [ ] Timer while playing
-- [ ] Save scores in the browser and show the 5 fastest times
+- [x] One 6x6 puzzle with a single correct answer
+- [x] Three-tap cycle (✕, ball, empty)
+- [x] Rule checking for rows, columns, zones and touching
+- [x] 3 hearts, and the puzzle restarts at 0
+- [x] "You win" screen and "Try again" button
+- [x] One simple Poké Ball picture
+- [x] Start screen with optional name box and "Start game" button
+- [x] Timer while playing
+- [x] Save scores in the browser and show the 5 fastest times
 
 ### Can wait
 - [ ] More levels and bigger boards
@@ -75,4 +75,4 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 ## 6. Progress notes
 Add short notes here as you work.
 
-- (date) ...
+- 2026-11-18: Built `index.html` with all must-haves. The zone layout in the mockup had 30 possible answers, so the game uses a new layout with exactly one answer (checked by brute force). Screenshots of the real game are in `screenshots/`.
