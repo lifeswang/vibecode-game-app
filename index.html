@@ -36,6 +36,19 @@
   .lb .r { display:flex; justify-content:space-between; padding:9px 8px; border-top:1px solid var(--line); font-size:15px; }
   .lb .r:first-child { border-top:none; }
   .lb .me { background:#e6f1fb; color:#0c447c; border-radius:6px; border-top:none; }
+  .how { width:100%; text-align:left; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
+  .how-title { font-size:15px; font-weight:500; margin-bottom:6px; }
+  .how ol { margin:0; padding-left:20px; font-size:14px; color:var(--muted); line-height:1.5; }
+  .how li { margin-bottom:4px; }
+  .ex { display:flex; flex-direction:column; gap:14px; margin-top:14px; }
+  .ex figure { margin:0; display:flex; align-items:center; gap:12px; }
+  .ex figcaption { font-size:13px; color:var(--muted); line-height:1.4; }
+  .mini { display:grid; gap:2px; background:#8a8880; padding:2px; border-radius:6px; flex:none; }
+  .mini div { width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--muted); background:#fff; }
+  .mini div svg { width:22px; height:22px; }
+  .mini .zA{background:#cecbf6}.mini .zB{background:#9fe1cb}.mini .zC{background:#fac775}.mini .zD{background:#f5c4b3}
+  .mini div.arrow { background:var(--card); width:16px; color:var(--muted); }
+  .mini div.bad { outline:2px solid var(--red); outline-offset:-2px; }
   .stack { width:100%; display:flex; flex-direction:column; gap:8px; }
 </style>
 </head>
@@ -58,6 +71,21 @@
   <input type="text" id="name" maxlength="12" placeholder="Your name (optional)" aria-label="Your name">
   <button class="primary" id="startBtn" style="margin-top:10px">Start game</button>
   <button class="link" id="startScores">High scores</button>
+  <div class="how">
+    <div class="how-title">How to play</div>
+    <ol>
+      <li>Put exactly one ball in every row, every column, and every color zone.</li>
+      <li>Balls can't touch each other, even diagonally.</li>
+      <li>Tap a square once for ✕ (a reminder), twice for a ball, three times to clear it.</li>
+      <li>A wrong ball costs a heart. Lose all 3 and the puzzle restarts.</li>
+      <li>Win by finishing fast. The 5 fastest times make the high score list.</li>
+    </ol>
+    <div class="ex">
+      <figure><div class="mini" id="exTap"></div><figcaption>Tap again and again: empty, ✕, ball</figcaption></figure>
+      <figure><div class="mini" id="exGood"></div><figcaption>Good: one ball per row, column, and zone, none touching</figcaption></figure>
+      <figure><div class="mini" id="exBad"></div><figcaption>Not allowed: these two balls touch</figcaption></figure>
+    </div>
+  </div>
 </section>
 
 <section class="screen" id="game">
@@ -216,7 +244,35 @@ function showScores() {
   });
   show("scores");
 }
-function backToStart() { clearInterval(timerId); show("start"); }
+function backToStart() {
+  clearInterval(timerId);
+  $("name").value = "";
+  show("start");
+  $("name").focus();
+}
+
+function mini(id, cols, items) {
+  var el = $(id), h = "";
+  el.style.gridTemplateColumns = "repeat(" + cols + ", auto)";
+  items.forEach(function (it) {
+    var cls = it.z ? "z" + it.z : "";
+    if (it.arrow) cls = "arrow";
+    if (it.bad) cls += " bad";
+    h += '<div class="' + cls + '">' + (it.ball ? BALL : (it.t || "")) + "</div>";
+  });
+  el.innerHTML = h;
+}
+mini("exTap", 5, [{}, { arrow: 1, t: "→" }, { t: "✕" }, { arrow: 1, t: "→" }, { ball: 1 }]);
+var goodZ = ["AAAB", "AABB", "CCDD", "CCDD"], goodBalls = ["0,1", "1,3", "2,0", "3,2"], g = [];
+for (var gr = 0; gr < 4; gr++) for (var gc = 0; gc < 4; gc++)
+  g.push({ z: goodZ[gr][gc], ball: goodBalls.indexOf(gr + "," + gc) > -1 });
+mini("exGood", 4, g);
+var b = [];
+for (var br = 0; br < 3; br++) for (var bc = 0; bc < 3; bc++) {
+  var on = (br === 0 && bc === 0) || (br === 1 && bc === 1);
+  b.push({ z: "A", ball: on, bad: on });
+}
+mini("exBad", 3, b);
 
 $("board").addEventListener("click", function (e) {
   var b = e.target.closest(".cell");
@@ -226,8 +282,8 @@ $("startBtn").addEventListener("click", startGame);
 $("name").addEventListener("keydown", function (e) { if (e.key === "Enter") startGame(); });
 $("startScores").addEventListener("click", showScores);
 $("winScores").addEventListener("click", showScores);
-$("winAgain").addEventListener("click", startGame);
-$("scoresAgain").addEventListener("click", startGame);
+$("winAgain").addEventListener("click", backToStart);
+$("scoresAgain").addEventListener("click", backToStart);
 </script>
 </body>
 </html>
