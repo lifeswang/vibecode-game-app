@@ -8,7 +8,8 @@ It's inspired by Meow Doku, a cat puzzle game, but with Poké Balls instead of c
 - Tap a square to cycle through three states: ✕ (a reminder to yourself), Poké Ball, then empty.
 - Put exactly one ball in every row, every column and every color zone.
 - Balls can't touch, even diagonally.
-- A wrong ball costs one heart and disappears. You have 3 hearts, and the puzzle restarts at 0.
+- A wrong ball costs one heart and disappears. You have 5 hearts, and the puzzle restarts at 0.
+- Two balls are already placed for you (with a dark border). They stay.
 - You win when every row, column and zone has one ball.
 - Enter a name (or leave it empty) on the start screen. Your time is saved, and everyone's time goes on a list, fastest first, so you can see who won.
 
@@ -24,13 +25,13 @@ Open `index.html` in a browser (double-click it). There is nothing to install.
 |---|---|
 | ![Win screen](screenshots/win.png) | ![High scores](screenshots/scores.png) |
 
-The high score names in these screenshots are demo data.
+The high score names in these screenshots are demo data. The screenshots show an earlier, bigger 6x6 version.
 
 ## Design
 The original plan is in [DESIGN.md](DESIGN.md), with a design mockup in `design/design-mockup.png`.
 
 ## Status
-The first playable version is built (one 6x6 puzzle, hearts, timer, and a saved high score list for all players).
+The first playable version is built (one 4x4 puzzle, hearts, timer, and a saved high score list for all players).
 
 ## More info
 See [DESIGN.md](DESIGN.md) for the full design, the build checklist and progress notes.

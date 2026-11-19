@@ -26,6 +26,7 @@
   .cell { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:500; color:var(--muted); border:none; border-radius:0; padding:0; }
   .cell:hover { filter:brightness(0.96); background-color:inherit; }
   .cell svg { width:70%; height:70%; }
+  .cell.given { box-shadow:inset 0 0 0 3px #2c2c2a; }
   .cell.bad { outline:3px solid var(--red); outline-offset:-3px; animation:shake .35s; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
   .zA{background:#cecbf6}.zB{background:#9fe1cb}.zC{background:#fac775}.zD{background:#f5c4b3}.zE{background:#b5d4f4}.zF{background:#c0dd97}
@@ -49,6 +50,11 @@
   .mini .zA{background:#cecbf6}.mini .zB{background:#9fe1cb}.mini .zC{background:#fac775}.mini .zD{background:#f5c4b3}
   .mini div.arrow { background:var(--card); width:16px; color:var(--muted); }
   .mini div.bad { outline:2px solid var(--red); outline-offset:-2px; }
+  .top-card { width:100%; background:#faeeda; border-radius:12px; padding:12px; margin:10px 0 6px; }
+  .tc-label { font-size:13px; color:#854f0b; }
+  .tc-name { font-size:24px; font-weight:500; color:#412402; margin:2px 0; }
+  .tc-time { font-size:15px; color:#633806; }
+  .warn { width:100%; background:#fcebeb; color:#791f1f; border-radius:8px; padding:8px 10px; font-size:13px; margin:8px 0 0; text-align:left; }
   .stack { width:100%; display:flex; flex-direction:column; gap:8px; }
 </style>
 </head>
@@ -77,7 +83,8 @@
       <li>Put exactly one ball in every row, every column, and every color zone.</li>
       <li>Balls can't touch each other, even diagonally.</li>
       <li>Tap a square once for ✕ (a reminder), twice for a ball, three times to clear it.</li>
-      <li>A wrong ball costs a heart. Lose all 3 and the puzzle restarts.</li>
+      <li>A wrong ball costs a heart. Lose all 5 hearts and the puzzle restarts.</li>
+      <li>Two balls (with a dark border) are already placed for you. They stay.</li>
       <li>Win by finishing fast. Every player's time goes on the high score list, fastest first.</li>
     </ol>
     <div class="ex">
@@ -110,7 +117,13 @@
 
 <section class="screen" id="scores">
   <div class="title" style="margin-top:6px">High scores</div>
+  <div class="top-card" id="topCard" style="display:none">
+    <div class="tc-label">Highest score</div>
+    <div class="tc-name" id="tcName"></div>
+    <div class="tc-time" id="tcTime"></div>
+  </div>
   <p class="small" id="lbSub">All players, fastest first</p>
+  <p class="warn" id="lbWarn" style="display:none">This page can't save scores, so they will be lost when you close or reload it. Open index.html in your browser to keep them.</p>
   <div class="lb" id="lb"></div>
   <div class="spacer"></div>
   <input type="text" id="name2" maxlength="12" placeholder="Your name (optional)" aria-label="Your name">
@@ -118,10 +131,12 @@
 </section>
 
 <script>
-var N = 6;
-var ZONES = ["AAAABB","AAAABB","CCCDBB","CDDDBB","CDDFEE","CDDFFE"];
+var N = 4;
+var ZONES = ["AAAB","AABB","CCDD","CCDD"];
 var BALL = '<svg aria-hidden="true"><use href="#pb"/></svg>';
-var MAX_HEARTS = 3, KEY = "pokeBallGridScores";
+var GIVEN = [[0, 1], [3, 2]];
+function isGiven(r, c) { return GIVEN.some(function (g) { return g[0] === r && g[1] === c; }); }
+var MAX_HEARTS = 5, KEY = "pokeBallGridScores";
 
 var cells, hearts, startTime, timerId, flash, locked, playerName, lastId;
 
@@ -142,10 +157,12 @@ function heartsHtml() {
 }
 function drawBoard(el, interactive) {
   var h = "";
+  el.style.gridTemplateColumns = "repeat(" + N + ", 1fr)";
   for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
     var v = cells[r][c], inner = "", cls = "cell z" + ZONES[r][c];
     if (v === 2) inner = BALL; else if (v === 1) inner = "✕";
     if (flash && flash.r === r && flash.c === c) { inner = BALL; cls += " bad"; }
+    if (isGiven(r, c)) cls += " given";
     var label = "Row " + (r + 1) + ", column " + (c + 1) + ", " + (v === 2 ? "ball" : v === 1 ? "marked" : "empty");
     h += '<button class="' + cls + '" data-r="' + r + '" data-c="' + c + '" aria-label="' + label + '"' + (interactive ? "" : " disabled") + ">" + inner + "</button>";
   }
@@ -158,6 +175,7 @@ function render() {
 function resetPuzzle() {
   cells = [];
   for (var r = 0; r < N; r++) cells.push(new Array(N).fill(0));
+  GIVEN.forEach(function (g) { cells[g[0]][g[1]] = 2; });
   hearts = MAX_HEARTS; flash = null; locked = false;
 }
 function startTimer() {
@@ -169,7 +187,7 @@ function startTimer() {
 function startGame(nameEl) {
   playerName = ((nameEl && nameEl.value) || "").trim() || "Guest";
   resetPuzzle();
-  $("msg").textContent = "Tap a square: ✕, then ball, then empty";
+  $("msg").textContent = "Two balls are placed for you. Tap a square: ✕, ball, empty";
   render(); show("game"); startTimer();
 }
 function conflicts(r, c) {
@@ -187,6 +205,7 @@ function ballCount() {
 }
 function tap(r, c) {
   if (locked) return;
+  if (isGiven(r, c)) { $("msg").textContent = "That ball is a free start. It stays."; return; }
   var v = cells[r][c];
   if (v === 0) { cells[r][c] = 1; }
   else if (v === 2) { cells[r][c] = 0; }
@@ -208,13 +227,22 @@ function mistake(r, c) {
     render();
   }, 500);
 }
+var memScores = [], storageOk = true;
 function loadScores() {
-  try { var s = JSON.parse(localStorage.getItem(KEY)); return Array.isArray(s) ? s : []; } catch (e) { return []; }
+  try {
+    var s = JSON.parse(localStorage.getItem(KEY));
+    storageOk = true;
+    return Array.isArray(s) ? s : [];
+  } catch (e) {
+    storageOk = false;
+    return memScores;
+  }
 }
 function saveScore(entry) {
   var all = loadScores(); all.push(entry);
   all.sort(function (a, b) { return a.ms - b.ms; });
-  try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {}
+  try { localStorage.setItem(KEY, JSON.stringify(all)); storageOk = true; }
+  catch (e) { storageOk = false; memScores = all; }
   return all;
 }
 function win() {
@@ -235,7 +263,10 @@ function showScores() {
     var p = document.createElement("p"); p.className = "small"; p.textContent = "No scores yet. Win a game to get on the list.";
     box.appendChild(p);
   }
-  $("lbSub").textContent = list.length ? "Fastest: " + list[0].name + " (" + fmt(list[0].ms) + ")" : "All players, fastest first";
+  $("topCard").style.display = list.length ? "block" : "none";
+  if (list.length) { $("tcName").textContent = list[0].name; $("tcTime").textContent = "Fastest time: " + fmt(list[0].ms); }
+  $("lbSub").textContent = "All players, fastest first";
+  $("lbWarn").style.display = storageOk ? "none" : "block";
   list.forEach(function (e, i) {
     var row = document.createElement("div");
     row.className = "r" + (e.id === lastId ? " me" : "");
@@ -259,7 +290,7 @@ function mini(id, cols, items) {
   el.innerHTML = h;
 }
 mini("exTap", 5, [{}, { arrow: 1, t: "→" }, { t: "✕" }, { arrow: 1, t: "→" }, { ball: 1 }]);
-var goodZ = ["AAAB", "AABB", "CCDD", "CCDD"], goodBalls = ["0,1", "1,3", "2,0", "3,2"], g = [];
+var goodZ = ["AAAB", "CCBB", "CCDB", "DDDD"], goodBalls = ["0,2", "1,0", "2,3", "3,1"], g = [];
 for (var gr = 0; gr < 4; gr++) for (var gc = 0; gc < 4; gc++)
   g.push({ z: goodZ[gr][gc], ball: goodBalls.indexOf(gr + "," + gc) > -1 });
 mini("exGood", 4, g);
