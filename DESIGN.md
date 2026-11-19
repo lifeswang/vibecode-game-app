@@ -30,7 +30,7 @@ Placing things on a grid under simple rules (the Meow Doku mechanic).
    - **Lose:** You have 3 hearts. At 0 hearts, the puzzle restarts.
    - **Start screen:** Before playing, you can type a name (optional, empty means "Guest") and tap "Start game".
    - **Score:** Fastest time wins. A timer runs while you play.
-   - **High scores:** After you win, you see your time and a list of the 5 fastest times. Scores are saved in the browser, so they only show on that device.
+   - **High scores:** After you win, you see your time and a list of every player's time, fastest first. Scores are saved in the browser, so they only show on that device.
 5. **Visual concept:** Three screens: a start screen (logo, name box, "Start game", "High scores" link), the game board, and a win screen with the time and a high score list. The board is a 6x6 grid with soft, bright colors, one color per zone. Every piece is the same simple red and white Poké Ball. Placing a ball makes it pop in. A wrong move makes the square shake and a heart disappears.
 6. **MLP:** See the checklist below.
 
@@ -47,7 +47,7 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 - [x] One simple Poké Ball picture
 - [x] Start screen with optional name box and "Start game" button
 - [x] Timer while playing
-- [x] Save scores in the browser and show the 5 fastest times
+- [x] Save scores in the browser and show every player's time, fastest first
 
 ### Can wait
 - [ ] More levels and bigger boards
@@ -68,7 +68,7 @@ Work top to bottom. Only start "Can wait" items if the must-haves are done.
 - **Tech:** Plain HTML, CSS and JavaScript in a single `index.html` file at the repo root. No frameworks, no installs. Open it by double-clicking.
 - **What to build:** The "Must have" checklist above, in order, matching `design/design-mockup.png` (four screens: start, playing, win, high scores).
 - **Puzzle:** One hand-made 6x6 puzzle with a single correct answer. Zone layout and solution are in the mockup's board.
-- **Scores:** Saved in the browser with `localStorage`. Show the 5 fastest times.
+- **Scores:** Saved in the browser with `localStorage`. Show every player's time, fastest first.
 - **Before pushing:** Show me the working game first and wait for my approval. Then take screenshots of the real game, add them to the README, and tick the checklist.
 - **Do not add** anything from "Can wait" until the must-haves are done.
 

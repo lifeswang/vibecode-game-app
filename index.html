@@ -32,7 +32,7 @@
   .spacer { flex:1; }
   .msg { min-height:20px; margin:12px 0 0; font-size:14px; color:var(--muted); }
   .big { font-size:36px; font-weight:500; margin:6px 0 0; }
-  .lb { width:100%; text-align:left; margin:12px 0; }
+  .lb { width:100%; text-align:left; margin:12px 0; max-height:300px; overflow-y:auto; }
   .lb .r { display:flex; justify-content:space-between; padding:9px 8px; border-top:1px solid var(--line); font-size:15px; }
   .lb .r:first-child { border-top:none; }
   .lb .me { background:#e6f1fb; color:#0c447c; border-radius:6px; border-top:none; }
@@ -78,7 +78,7 @@
       <li>Balls can't touch each other, even diagonally.</li>
       <li>Tap a square once for ✕ (a reminder), twice for a ball, three times to clear it.</li>
       <li>A wrong ball costs a heart. Lose all 3 and the puzzle restarts.</li>
-      <li>Win by finishing fast. The 5 fastest times make the high score list.</li>
+      <li>Win by finishing fast. Every player's time goes on the high score list, fastest first.</li>
     </ol>
     <div class="ex">
       <figure><div class="mini" id="exTap"></div><figcaption>Tap again and again: empty, ✕, ball</figcaption></figure>
@@ -110,7 +110,7 @@
 
 <section class="screen" id="scores">
   <div class="title" style="margin-top:6px">High scores</div>
-  <p class="small">Fastest times</p>
+  <p class="small" id="lbSub">All players, fastest first</p>
   <div class="lb" id="lb"></div>
   <div class="spacer"></div>
   <button class="primary" id="scoresAgain">Play again</button>
@@ -213,7 +213,6 @@ function loadScores() {
 function saveScore(entry) {
   var all = loadScores(); all.push(entry);
   all.sort(function (a, b) { return a.ms - b.ms; });
-  all = all.slice(0, 5);
   try { localStorage.setItem(KEY, JSON.stringify(all)); } catch (e) {}
   return all;
 }
@@ -235,6 +234,7 @@ function showScores() {
     var p = document.createElement("p"); p.className = "small"; p.textContent = "No scores yet. Win a game to get on the list.";
     box.appendChild(p);
   }
+  $("lbSub").textContent = list.length ? "Fastest: " + list[0].name + " (" + fmt(list[0].ms) + ")" : "All players, fastest first";
   list.forEach(function (e, i) {
     var row = document.createElement("div");
     row.className = "r" + (e.id === lastId ? " me" : "");
