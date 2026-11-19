@@ -113,7 +113,8 @@
   <p class="small" id="lbSub">All players, fastest first</p>
   <div class="lb" id="lb"></div>
   <div class="spacer"></div>
-  <button class="primary" id="scoresAgain">Play again</button>
+  <input type="text" id="name2" maxlength="12" placeholder="Your name (optional)" aria-label="Your name">
+  <button class="primary" id="scoresAgain" style="margin-top:10px">Start game</button>
 </section>
 
 <script>
@@ -165,8 +166,8 @@ function startTimer() {
   $("timer").textContent = "Time 0:00";
   timerId = setInterval(function () { $("timer").textContent = "Time " + fmt(Date.now() - startTime); }, 250);
 }
-function startGame() {
-  playerName = $("name").value.trim() || "Guest";
+function startGame(nameEl) {
+  playerName = ((nameEl && nameEl.value) || "").trim() || "Guest";
   resetPuzzle();
   $("msg").textContent = "Tap a square: ✕, then ball, then empty";
   render(); show("game"); startTimer();
@@ -242,13 +243,8 @@ function showScores() {
     var b = document.createElement("span"); b.textContent = fmt(e.ms);
     row.appendChild(a); row.appendChild(b); box.appendChild(row);
   });
+  $("name2").value = "";
   show("scores");
-}
-function backToStart() {
-  clearInterval(timerId);
-  $("name").value = "";
-  show("start");
-  $("name").focus();
 }
 
 function mini(id, cols, items) {
@@ -278,12 +274,13 @@ $("board").addEventListener("click", function (e) {
   var b = e.target.closest(".cell");
   if (b) tap(+b.dataset.r, +b.dataset.c);
 });
-$("startBtn").addEventListener("click", startGame);
-$("name").addEventListener("keydown", function (e) { if (e.key === "Enter") startGame(); });
+$("startBtn").addEventListener("click", function () { startGame($("name")); });
+$("name").addEventListener("keydown", function (e) { if (e.key === "Enter") startGame($("name")); });
+$("name2").addEventListener("keydown", function (e) { if (e.key === "Enter") startGame($("name2")); });
 $("startScores").addEventListener("click", showScores);
 $("winScores").addEventListener("click", showScores);
-$("winAgain").addEventListener("click", backToStart);
-$("scoresAgain").addEventListener("click", backToStart);
+$("winAgain").addEventListener("click", showScores);
+$("scoresAgain").addEventListener("click", function () { startGame($("name2")); });
 </script>
 </body>
 </html>
